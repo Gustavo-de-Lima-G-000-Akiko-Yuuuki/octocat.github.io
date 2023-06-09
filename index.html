@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Conexão Kinect Xbox 360</title>
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/knect-js"></script>
+</head>
+<body>
+  <h1>Conexão Kinect Xbox 360</h1>
+  <div id="knect-output"></div>
+
+  <script>
+    $(document).ready(function() {
+      var outputDiv = $('#knect-output');
+
+      // Verificar se o navegador suporta a API do Kinect
+      if (typeof Knect === 'undefined') {
+        outputDiv.text('Este navegador não suporta a API do Kinect.');
+        return;
+      }
+
+      // Criar uma instância do Kinect
+      var kinect = new Knect();
+
+      // Conectar-se ao Kinect
+      kinect.connect(function(error) {
+        if (error) {
+          outputDiv.text('Ocorreu um erro ao conectar-se ao Kinect: ' + error);
+        } else {
+          outputDiv.text('Conectado ao Kinect com sucesso!');
+          // Faça outras operações com o Kinect aqui
+        }
+      });
+    });
+  </script>
+</body>
+</html>
