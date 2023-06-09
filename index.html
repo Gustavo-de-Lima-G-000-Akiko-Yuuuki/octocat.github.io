@@ -3,7 +3,6 @@
 <head>
   <title>Conexão Kinect Xbox 360</title>
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/knect-js"></script>
 </head>
 <body>
   <h1>Conexão Kinect Xbox 360</h1>
@@ -13,24 +12,38 @@
     $(document).ready(function() {
       var outputDiv = $('#knect-output');
 
-      // Verificar se o navegador suporta a API do Kinect
-      if (typeof Knect === 'undefined') {
-        outputDiv.text('Este navegador não suporta a API do Kinect.');
+      // Verificar se o navegador suporta o Native Client
+      if (!window.chrome || !window.chrome.hasOwnProperty('naclModule')) {
+        outputDiv.text('Este navegador não suporta o Native Client.');
         return;
       }
 
-      // Criar uma instância do Kinect
-      var kinect = new Knect();
+      // Carregar o módulo Native Client
+      var moduleInfo = {
+        name: 'kinect.nmf', // Nome do arquivo Native Client (.nmf)
+        mimeType: 'application/x-nacl', // Mime type para o Native Client
+      };
+      var naclModule = document.createElement('embed');
+      naclModule.setAttribute('src', 'caminho/para/o/arquivo/kinect.nmf');
+      naclModule.setAttribute('type', moduleInfo.mimeType);
+      naclModule.setAttribute('width', '0');
+      naclModule.setAttribute('height', '0');
+      document.body.appendChild(naclModule);
 
       // Conectar-se ao Kinect
-      kinect.connect(function(error) {
-        if (error) {
-          outputDiv.text('Ocorreu um erro ao conectar-se ao Kinect: ' + error);
+      naclModule.addEventListener('load', function() {
+        if (naclModule.postMessage && naclModule.addEventListener) {
+          naclModule.addEventListener('message', function(event) {
+            if (event.data === 'connected') {
+              outputDiv.text('Conectado ao Kinect com sucesso!');
+              // Faça outras operações com o Kinect aqui
+            }
+          }, false);
+          naclModule.postMessage('connect');
         } else {
-          outputDiv.text('Conectado ao Kinect com sucesso!');
-          // Faça outras operações com o Kinect aqui
+          outputDiv.text('Ocorreu um erro ao conectar-se ao Kinect.');
         }
-      });
+      }, true);
     });
   </script>
 </body>
